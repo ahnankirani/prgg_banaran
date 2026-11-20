@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { categoryColor } from "@/data/places";
-import { LAYERS } from "@/data/layers";
+import { LAYERS, NAME_PROPS } from "@/data/layers";
 import { overlay } from "./ui";
 
 const CENTER = [-7.96, 110.22];
@@ -87,16 +87,38 @@ export default function MapView({ places, selected, onSelect, layerOn }) {
     }
   }, [ready, selected]);
 
-  // Lapisan Legenda (GeoJSON)
+  // Lapisan Legenda (GeoJSON dari /public/geojson/), dimuat saat pertama kali dinyalakan
   useEffect(() => {
     const ctx = ctxRef.current;
     if (!ready || !ctx) return;
-    LAYERS.forEach((layer) => {
-      if (!layer.geojson) return;
-      if (!ctx.layers[layer.id]) ctx.layers[layer.id] = ctx.L.geoJSON(layer.geojson, { style: layer.style });
-      const obj = ctx.layers[layer.id];
-      if (layerOn[layer.id]) obj.addTo(ctx.map);
-      else ctx.map.removeLayer(obj);
+    ctx.want = ctx.want ?? {};
+    LAYERS.forEach(async (layer, order) => {
+      const wanted = Boolean(layerOn[layer.id]);
+      ctx.want[layer.id] = wanted;
+      if (!wanted) {
+        if (ctx.layers[layer.id]) ctx.map.removeLayer(ctx.layers[layer.id]);
+        return;
+      }
+      if (!ctx.layers[layer.id]) {
+        try {
+          const res = await fetch(layer.url);
+          if (!res.ok) return;
+          const data = await res.json();
+          ctx.layers[layer.id] = ctx.L.geoJSON(data, {
+            style: layer.style,
+            onEachFeature: (feature, lyr) => {
+              const key = NAME_PROPS.find((k) => feature.properties?.[k]);
+              if (key) lyr.bindTooltip(String(feature.properties[key]), { sticky: true });
+            },
+          });
+        } catch {
+          return;
+        }
+      }
+      // Bisa jadi toggle sudah dimatikan / komponen sudah dilepas selama menunggu fetch.
+      if (ctxRef.current !== ctx || !ctx.want[layer.id]) return;
+      ctx.layers[layer.id].addTo(ctx.map);
+      ctx.layers[layer.id].setZIndex?.(order);
     });
   }, [ready, layerOn]);
 

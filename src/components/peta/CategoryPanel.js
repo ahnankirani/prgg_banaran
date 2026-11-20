@@ -1,24 +1,14 @@
 "use client";
 
-import { PLACES, SUB_COLORS, subCategories } from "@/data/places";
+import { PLACES, subCategories } from "@/data/places";
+import Donut from "./Donut";
 import { closeBtn, panel, panelHead } from "./ui";
-
-const R = 15.915; // keliling lingkaran = 100
 
 export default function CategoryPanel({ cat, sub, onSub, onClose, onSelect }) {
   const inCat = PLACES.filter((p) => p.cat === cat);
   const subs = subCategories(cat);
-  const counts = subs.map((s) => inCat.filter((p) => p.sub === s).length);
-  const total = inCat.length;
+  const items = subs.map((s) => ({ label: s, value: inCat.filter((p) => p.sub === s).length }));
   const list = inCat.filter((p) => !sub || p.sub === sub);
-
-  let offset = 0;
-  const arcs = counts.map((n, i) => {
-    const len = total ? (n / total) * 100 : 0;
-    const arc = { n, i, len, offset };
-    offset += len;
-    return arc;
-  });
 
   return (
     <aside className={panel}>
@@ -37,44 +27,7 @@ export default function CategoryPanel({ cat, sub, onSub, onClose, onSelect }) {
         </button>
       </div>
 
-      <div className="flex items-center gap-3.5">
-        <div className="relative size-[110px] flex-none">
-          <svg className="size-full -rotate-90" viewBox="0 0 42 42" aria-hidden="true">
-            <circle cx="21" cy="21" r={R} fill="none" stroke="#eef0f4" strokeWidth="7" />
-            {arcs
-              .filter((a) => a.n > 0)
-              .map((a) => (
-                <circle
-                  key={a.i}
-                  cx="21"
-                  cy="21"
-                  r={R}
-                  fill="none"
-                  stroke={SUB_COLORS[a.i % SUB_COLORS.length]}
-                  strokeWidth="7"
-                  strokeDasharray={`${a.len} ${100 - a.len}`}
-                  strokeDashoffset={-a.offset}
-                />
-              ))}
-          </svg>
-          <div className="absolute inset-0 grid place-content-center text-center text-[13px] leading-[1.15] font-semibold">
-            <span>
-              <b className="text-lg">{total}</b>
-              <br />
-              Total
-            </span>
-          </div>
-        </div>
-        <div className="flex-1 text-[11px]">
-          {subs.map((s, i) => (
-            <div key={s} className="flex min-h-[22px] items-center gap-1.5">
-              <i className="size-[9px] flex-none rounded-[2px]" style={{ background: SUB_COLORS[i % SUB_COLORS.length] }} />
-              <span className="flex-1">{s}</span>
-              <b>{counts[i]}</b>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Donut items={items} />
 
       <div className="mt-4 flex flex-col gap-2">
         {["Semua", ...subs].map((s) => {
