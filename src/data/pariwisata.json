@@ -1,0 +1,58 @@
+[
+    {
+        "id":  "WST-01",
+        "kategori":  "Wisata_Alam",
+        "nama":  "Laguna Pantai Trisik",
+        "alamat":  "Banaran, Kec. Galur, Kabupaten Kulon Progo, Daerah Istimewa Yogyakarta 55661",
+        "lat":  null,
+        "lng":  null,
+        "deskripsi":  "Kawasan wisata alam berupa laguna di pesisir Pantai Trisik yang menawarkan pemandangan perairan, panorama pesisir, dan potensi wisata edukasi lingkungan.",
+        "fasilitas":  null,
+        "kontak":  null,
+        "foto":  null,
+        "sumber":  null,
+        "status":  null
+    },
+    {
+        "id":  "WST-02",
+        "kategori":  "Wisata_Konservasi",
+        "nama":  "Konservasi Penyu Abadi Trisik",
+        "alamat":  "Kawasan Pantai Trisik, Kalurahan Banaran, Kapanewon Galur, Kabupaten Kulon Progo, DIY 55661",
+        "lat":  null,
+        "lng":  null,
+        "deskripsi":  "Kawasan konservasi penyu yang berfokus pada perlindungan telur, penetasan, pemeliharaan tukik, dan pelepasan tukik ke habitat alaminya.",
+        "fasilitas":  null,
+        "kontak":  null,
+        "foto":  null,
+        "sumber":  "https://dinpar.kulonprogokab.go.id/",
+        "status":  null
+    },
+    {
+        "id":  "WST-03",
+        "kategori":  "Wisata_Edukasi",
+        "nama":  "Tom Batik Warna Alam",
+        "alamat":  "Padukuhan Kenteng, Kalurahan Banaran, Kapanewon Galur, Kabupaten Kulon Progo, DIY 55661",
+        "lat":  null,
+        "lng":  null,
+        "deskripsi":  "Usaha kerajinan batik yang menggunakan pewarna alami dan memiliki potensi sebagai wisata edukasi mengenai proses pembuatan batik.",
+        "fasilitas":  null,
+        "kontak":  null,
+        "foto":  null,
+        "sumber":  "https://dinpar.kulonprogokab.go.id/",
+        "status":  null
+    },
+    {
+        "id":  "WST-04",
+        "kategori":  "Ekowisata",
+        "nama":  "Kawasan Ekowisata Mangrove Bleberan",
+        "alamat":  "Padukuhan Bleberan, Kalurahan Banaran, Kapanewon Galur, Kabupaten Kulon Progo, DIY 55661",
+        "lat":  null,
+        "lng":  null,
+        "deskripsi":  "Kawasan mangrove yang dikembangkan sebagai ekowisata berbasis pelestarian lingkungan, edukasi ekosistem pesisir, dan mitigasi bencana.",
+        "fasilitas":  null,
+        "kontak":  null,
+        "foto":  null,
+        "sumber":  null,
+        "status":  null
+    }
+]
