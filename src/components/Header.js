@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -18,7 +19,14 @@ export default function Header({ compact = false }) {
       }`}
     >
       <Link href="/" className="flex items-center gap-3">
-        <div className={`flex-none rounded-lg bg-[#2f6bb0] ${compact ? "size-7" : "size-9"}`} />
+        <Image
+          src="/images/logo-banaran.jpg"
+          alt="Logo Kalurahan Banaran"
+          width={150}
+          height={150}
+          priority
+          className={`flex-none object-contain ${compact ? "size-16" : "size-20"}`}
+        />
         <div>
           <h1
             className={`font-serif leading-none font-bold max-[700px]:text-2xl ${compact ? "text-2xl" : "text-[32px]"}`}

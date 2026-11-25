@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const ROW = "mb-1 flex items-center gap-3 text-[15px] leading-normal";
 const ICON = "size-[30px] flex-none";
 const SOCIAL_ICON = "size-[38px]";
@@ -12,7 +14,13 @@ export default function Footer({ flush = false }) {
       }`}
     >
       <div className="flex items-center gap-4">
-        <div className="size-9 flex-none rounded-lg bg-white" />
+        <Image
+          src="/images/logo-banaran.jpg"
+          alt="Logo Kalurahan Banaran"
+          width={150}
+          height={150}
+          className="size-20 flex-none rounded-lg bg-white object-contain"
+        />
         <div>
           <strong className="block text-[17px] font-bold">
             Kalurahan Banaran
@@ -34,12 +42,18 @@ export default function Footer({ flush = false }) {
             <path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" />
             <circle cx="12" cy="10" r="2.6" />
           </svg>
-          <span>
+          <a
+            href="https://maps.app.goo.gl/Xu3ZyFCcKaLpnkTf6"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Buka lokasi kantor di Google Maps"
+            className="hover:underline"
+          >
             Jl. Pantai Trisik, Dusun 7, Banaran, Kec. Galur, Kabupaten Kulon
             Progo
             <br />
             Daerah Istimewa Yogyakarta
-          </span>
+          </a>
         </div>
       </div>
 
