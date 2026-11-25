@@ -7,14 +7,21 @@ import MapView from "./MapView";
 import Legend from "./Legend";
 import CategoryPanel from "./CategoryPanel";
 import KependudukanPanel from "./KependudukanPanel";
+import PertanianPanel from "./PertanianPanel";
 import StatistikModal from "@/components/statistik/StatistikModal";
+import { PERTANIAN_SUBJECTS } from "@/data/pertanian";
 import DetailPanel from "./DetailPanel";
 import SearchModal from "./SearchModal";
 import { chip, overlay, searchIcon } from "./ui";
 
 // Tab statistik (bukan titik di peta): isinya panel data kependudukan.
 const KEPENDUDUKAN = "Kependudukan";
-const CHIPS = [...CATEGORIES.map((c) => c.name), KEPENDUDUKAN];
+// Tab Pertanian: lahan sawah & nonsawah ditampilkan sebagai lapisan peta (bukan titik), plus komoditas & statistik.
+const PERTANIAN = "Pertanian";
+const CHIPS = [...CATEGORIES.map((c) => c.name), PERTANIAN, KEPENDUDUKAN];
+const LAHAN_LAYERS = ["sawah", "nonsawah"];
+const NO_FOCUS = [];
+const PERTANIAN_DEFAULT_SELECTED = ["luas:sawah", "luas:nonsawah"];
 
 export default function PetaApp() {
   const [cat, setCat] = useState(null);
@@ -22,6 +29,8 @@ export default function PetaApp() {
   const [selectedId, setSelectedId] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [statId, setStatId] = useState(null); // topik statistik yang sedang dibuka (jendela besar)
+  const [pertStatOpen, setPertStatOpen] = useState(false); // dashboard statistik luas lahan pertanian
+  const [pertInit, setPertInit] = useState({ id: null, n: 0 }); // komoditas yang dibuka dari pencarian (n = pemicu remount)
   const [layerOn, setLayerOn] = useState({});
   const [available, setAvailable] = useState({});
 
@@ -56,27 +65,66 @@ export default function PetaApp() {
     [cat, sub],
   );
 
+  // Lapisan lahan sawah/nonsawah menyala otomatis hanya saat tab Pertanian terbuka.
+  const setLahan = useCallback((on) => setLayerOn((s) => ({ ...s, sawah: on, nonsawah: on })), []);
+
   const toggleCat = (name) => {
+    const next = cat === name ? null : name;
     setSelectedId(null);
     setSub(null);
-    setCat((prev) => (prev === name ? null : name));
+    setCat(next);
+    setLahan(next === PERTANIAN);
   };
   const closeCat = () => {
     setCat(null);
     setSub(null);
+    setLahan(false);
   };
-  const select = useCallback((id) => {
-    setCat(null);
-    setSub(null);
-    setSelectedId(id);
-    setSearchOpen(false);
-  }, []);
+  const select = useCallback(
+    (id) => {
+      setCat(null);
+      setSub(null);
+      setLahan(false);
+      setSelectedId(id);
+      setSearchOpen(false);
+    },
+    [setLahan],
+  );
+  // Hasil pencarian: tempat -> detail di peta; Pertanian -> buka tab Pertanian; Kependudukan -> buka statistik topik itu.
+  const selectItem = useCallback(
+    (item) => {
+      if (item.type === "place") {
+        select(item.id);
+        return;
+      }
+      setSearchOpen(false);
+      setSelectedId(null);
+      setSub(null);
+      if (item.type === "pertanian") {
+        setPertInit((p) => ({ id: item.id, n: p.n + 1 }));
+        setCat(PERTANIAN);
+        setLahan(true);
+      } else {
+        setCat(KEPENDUDUKAN);
+        setLahan(false);
+        setStatId(item.id);
+      }
+    },
+    [select, setLahan],
+  );
   const closeSearch = useCallback(() => setSearchOpen(false), []);
   const closeStat = useCallback(() => setStatId(null), []);
+  const closePertStat = useCallback(() => setPertStatOpen(false), []);
 
   return (
     <main className="relative min-h-[520px] flex-1">
-      <MapView places={visible} selected={selected} onSelect={select} layerOn={layerOn} />
+      <MapView
+        places={visible}
+        selected={selected}
+        onSelect={select}
+        layerOn={layerOn}
+        focusIds={cat === PERTANIAN ? LAHAN_LAYERS : NO_FOCUS}
+      />
 
       <button
         type="button"
@@ -101,13 +149,32 @@ export default function PetaApp() {
       <Legend layerOn={layerOn} available={available} onToggle={(id) => setLayerOn((s) => ({ ...s, [id]: !s[id] }))} />
 
       {cat === KEPENDUDUKAN && !selected && <KependudukanPanel onClose={closeCat} onOpen={setStatId} />}
-      {cat && cat !== KEPENDUDUKAN && !selected && (
+      {cat === PERTANIAN && !selected && (
+        <PertanianPanel
+          key={pertInit.n}
+          initialKomoditasId={pertInit.id}
+          layerOn={layerOn}
+          available={available}
+          onToggleLayer={(id) => setLayerOn((s) => ({ ...s, [id]: !s[id] }))}
+          onOpenStat={() => setPertStatOpen(true)}
+          onClose={closeCat}
+        />
+      )}
+      {cat && cat !== KEPENDUDUKAN && cat !== PERTANIAN && !selected && (
         <CategoryPanel cat={cat} sub={sub} onSub={setSub} onClose={closeCat} onSelect={select} />
       )}
       {selected && <DetailPanel key={selected.id} place={selected} onClose={() => setSelectedId(null)} />}
 
-      {searchOpen && <SearchModal onClose={closeSearch} onSelect={select} />}
+      {searchOpen && <SearchModal onClose={closeSearch} onSelect={selectItem} />}
       {statId && <StatistikModal key={statId} initialId={statId} onClose={closeStat} />}
+      {pertStatOpen && (
+        <StatistikModal
+          subjects={PERTANIAN_SUBJECTS}
+          defaultSelected={PERTANIAN_DEFAULT_SELECTED}
+          label="Statistik luas lahan pertanian"
+          onClose={closePertStat}
+        />
+      )}
     </main>
   );
 }

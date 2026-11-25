@@ -25,7 +25,9 @@ function pinIcon(L, color, active) {
   });
 }
 
-export default function MapView({ places, selected, onSelect, layerOn }) {
+// focusIds: id lapisan yang menjadi fokus; peta otomatis zoom ke area lapisan itu saat tampil.
+export default function MapView({ places, selected, onSelect, layerOn, focusIds = [] }) {
+  const focusKey = focusIds.join(",");
   const elRef = useRef(null);
   const ctxRef = useRef(null); // { L, map, group, markers, layers }
   const onSelectRef = useRef(onSelect);
@@ -107,8 +109,9 @@ export default function MapView({ places, selected, onSelect, layerOn }) {
           ctx.layers[layer.id] = ctx.L.geoJSON(data, {
             style: layer.style,
             onEachFeature: (feature, lyr) => {
-              const key = NAME_PROPS.find((k) => feature.properties?.[k]);
-              if (key) lyr.bindTooltip(String(feature.properties[key]), { sticky: true });
+              const props = feature.properties ?? {};
+              const key = NAME_PROPS.find((k) => props[k]);
+              if (key) lyr.bindTooltip(String(props[key]), { sticky: true });
             },
           });
         } catch {
@@ -119,8 +122,21 @@ export default function MapView({ places, selected, onSelect, layerOn }) {
       if (ctxRef.current !== ctx || !ctx.want[layer.id]) return;
       ctx.layers[layer.id].addTo(ctx.map);
       ctx.layers[layer.id].setZIndex?.(order);
+
+      // Zoom ke gabungan lapisan fokus yang sedang tampil.
+      const focus = focusKey ? focusKey.split(",") : [];
+      if (focus.includes(layer.id)) {
+        let bounds = null;
+        focus.forEach((id) => {
+          const lyr = ctx.layers[id];
+          if (!lyr || !ctx.map.hasLayer(lyr)) return;
+          const b = lyr.getBounds();
+          bounds = bounds ? bounds.extend(b) : ctx.L.latLngBounds(b.getSouthWest(), b.getNorthEast());
+        });
+        if (bounds) ctx.map.fitBounds(bounds, { padding: [70, 70], maxZoom: 16 });
+      }
     });
-  }, [ready, layerOn]);
+  }, [ready, layerOn, focusKey]);
 
   const zoomBtn = "h-[30px] w-[34px] cursor-pointer text-xl text-[#0f2552]";
 

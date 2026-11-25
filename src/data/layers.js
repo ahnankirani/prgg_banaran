@@ -43,6 +43,22 @@ export const LAYERS = [
     color: "#0d5cff",
     style: { color: "#2f7bff", weight: 4, opacity: 0.85 },
   },
+  // Peta persebaran lahan pertanian. Otomatis dinyalakan saat tab "Pertanian" dibuka.
+  // File saat ini hanya CONTOH (dummy), ganti dengan GeoJSON asli.
+  {
+    id: "sawah",
+    name: "Lahan Sawah",
+    url: "/geojson/lahan-sawah.geojson",
+    color: "#4caf50",
+    style: { color: "#2e7d32", weight: 2, fill: true, fillColor: "#4caf50", fillOpacity: 0.45 },
+  },
+  {
+    id: "nonsawah",
+    name: "Lahan Nonsawah",
+    url: "/geojson/lahan-nonsawah.geojson",
+    color: "#f0b44c",
+    style: { color: "#c98a1c", weight: 2, fill: true, fillColor: "#f0b44c", fillOpacity: 0.45 },
+  },
 ];
 
 // Nama atribut (kolom tabel SHP) yang dipakai sebagai label saat di-hover, dicoba berurutan.

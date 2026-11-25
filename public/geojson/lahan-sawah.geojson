@@ -1,0 +1,11 @@
+{
+  "type": "FeatureCollection",
+  "name": "Lahan Sawah (CONTOH / DUMMY - ganti dengan data asli)",
+  "features": [
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Sawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.1925, -7.9715], [110.1965, -7.9712], [110.1972, -7.9748], [110.193, -7.9752], [110.1925, -7.9715]]] } },
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Sawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.1985, -7.97], [110.203, -7.9698], [110.2035, -7.9732], [110.199, -7.9735], [110.1985, -7.97]]] } },
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Sawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.2005, -7.9745], [110.2045, -7.9742], [110.2048, -7.9775], [110.2008, -7.9778], [110.2005, -7.9745]]] } },
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Sawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.19, -7.968], [110.1935, -7.9676], [110.1938, -7.9702], [110.1903, -7.9705], [110.19, -7.968]]] } },
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Sawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.2235, -7.9498], [110.2262, -7.9496], [110.2264, -7.9522], [110.2237, -7.9524], [110.2235, -7.9498]]] } }
+  ]
+}

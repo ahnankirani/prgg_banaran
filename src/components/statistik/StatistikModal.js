@@ -13,7 +13,7 @@ const withColors = (subject) =>
 
 const idOf = (subject, series) => `${subject.id}:${series.key}`;
 
-// Data yang tercentang saat jendela pertama kali dibuka pada "Semua Statistik".
+// Data yang tercentang saat jendela pertama kali dibuka pada "Semua Statistik" (untuk data kependudukan).
 const DEFAULT_SELECTED = ["penduduk:jml", "kk:kk"];
 
 const ChartIcon = () => (
@@ -75,7 +75,7 @@ function SubjectView({ subject, view }) {
 }
 
 // "Semua Statistik": pilihan data (centang) di ATAS, lalu SATU grafik/tabel gabungan di bawahnya.
-function AllView({ selected, toggle, onClear, view }) {
+function AllView({ subjects, selected, toggle, onClear, view }) {
   const [scale, setScale] = useState("asli"); // "asli" | "indeks"
 
   const colorOf = (id) => SERIES_COLORS[selected.indexOf(id) % SERIES_COLORS.length];
@@ -83,7 +83,7 @@ function AllView({ selected, toggle, onClear, view }) {
   const chosen = selected
     .map((id) => {
       const [sid, key] = id.split(":");
-      const subject = SUBJECTS.find((s) => s.id === sid);
+      const subject = subjects.find((s) => s.id === sid);
       const s = subject?.series.find((x) => x.key === key);
       if (!s) return null;
       const base = s.values[0] || 1;
@@ -119,7 +119,7 @@ function AllView({ selected, toggle, onClear, view }) {
           )}
         </div>
         <div className="grid gap-x-6 gap-y-3 md:grid-cols-2">
-          {SUBJECTS.map((subject) => (
+          {subjects.map((subject) => (
             <div key={subject.id}>
               <div className="mb-1.5 text-xs font-semibold tracking-wide text-slate-500 uppercase">{subject.title}</div>
               <div className="flex flex-wrap gap-1.5">
@@ -178,11 +178,20 @@ function AllView({ selected, toggle, onClear, view }) {
   );
 }
 
-// Jendela statistik per tahun, dibuka dari panel "Kependudukan" di halaman Peta.
-export default function StatistikModal({ initialId, onClose }) {
+// Jendela statistik per tahun (dipakai oleh panel Kependudukan dan Pertanian di halaman Peta).
+//   subjects        : daftar topik (default: data kependudukan)
+//   defaultSelected : data yang tercentang saat "Semua Statistik" dibuka
+//   label           : nama jendela (untuk aksesibilitas)
+export default function StatistikModal({
+  initialId,
+  onClose,
+  subjects = SUBJECTS,
+  defaultSelected = DEFAULT_SELECTED,
+  label = "Statistik kependudukan",
+}) {
   const [subjectId, setSubjectId] = useState(initialId ?? ALL_ID);
   const [view, setView] = useState("grafik");
-  const [selected, setSelected] = useState(DEFAULT_SELECTED); // id data yang dicentang (urut waktu dipilih)
+  const [selected, setSelected] = useState(defaultSelected); // id data yang dicentang (urut waktu dipilih)
 
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
@@ -191,11 +200,11 @@ export default function StatistikModal({ initialId, onClose }) {
   }, [onClose]);
 
   const isAll = subjectId === ALL_ID;
-  const subject = isAll ? null : SUBJECTS.find((s) => s.id === subjectId);
+  const subject = isAll ? null : (subjects.find((s) => s.id === subjectId) ?? subjects[0]);
 
   const toggle = (id) => setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
-  const toggleBtn = (id, label, icon) => (
+  const toggleBtn = (id, text, icon) => (
     <button
       type="button"
       onClick={() => setView(id)}
@@ -205,7 +214,7 @@ export default function StatistikModal({ initialId, onClose }) {
       }`}
     >
       {icon}
-      {label}
+      {text}
     </button>
   );
 
@@ -232,7 +241,7 @@ export default function StatistikModal({ initialId, onClose }) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Statistik kependudukan"
+        aria-label={label}
         className="relative max-h-[calc(100vh-32px)] w-[min(1200px,100%)] overflow-auto rounded-3xl bg-slate-50 p-5 font-sans sm:p-7"
       >
         <button
@@ -250,7 +259,7 @@ export default function StatistikModal({ initialId, onClose }) {
             <div className="bg-brand px-5 py-3.5 text-lg font-bold text-white">Subjek Statistik</div>
             <ul className="flex gap-1 overflow-x-auto p-2.5 lg:block lg:space-y-1 lg:overflow-visible">
               {navItem(ALL_ID, "Semua Statistik")}
-              {SUBJECTS.map((s) => navItem(s.id, s.title))}
+              {subjects.map((s) => navItem(s.id, s.title))}
             </ul>
           </aside>
 
@@ -270,7 +279,13 @@ export default function StatistikModal({ initialId, onClose }) {
             </div>
 
             {isAll ? (
-              <AllView selected={selected} toggle={toggle} onClear={() => setSelected([])} view={view} />
+              <AllView
+                subjects={subjects}
+                selected={selected}
+                toggle={toggle}
+                onClear={() => setSelected([])}
+                view={view}
+              />
             ) : (
               <SubjectView key={subject.id} subject={subject} view={view} />
             )}

@@ -1,0 +1,10 @@
+{
+  "type": "FeatureCollection",
+  "name": "Lahan Nonsawah (CONTOH / DUMMY - ganti dengan data asli)",
+  "features": [
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Nonsawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.2195, -7.958], [110.223, -7.9578], [110.2232, -7.9603], [110.2197, -7.9605], [110.2195, -7.958]]] } },
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Nonsawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.2165, -7.9632], [110.22, -7.963], [110.2203, -7.9656], [110.2168, -7.9658], [110.2165, -7.9632]]] } },
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Nonsawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.2265, -7.9522], [110.23, -7.952], [110.2303, -7.9546], [110.2268, -7.9548], [110.2265, -7.9522]]] } },
+    { "type": "Feature", "properties": { "NAMOBJ": "Lahan Nonsawah (contoh)" }, "geometry": { "type": "Polygon", "coordinates": [[[110.213, -7.9658], [110.2165, -7.9656], [110.2167, -7.9682], [110.2132, -7.9684], [110.213, -7.9658]]] } }
+  ]
+}
